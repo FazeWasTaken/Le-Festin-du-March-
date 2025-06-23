@@ -1,0 +1,2594 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Festin du Marché - Restaurant</title>
+    <style>
+        :root {
+            --primary-color: #2c5530;
+            --primary-hover: #1e3a21;
+            --background-color: #fefefe;
+            --text-color: #333;
+            --card-background: #fff;
+            --border-color: #f0f0f0;
+            --shadow: rgba(0,0,0,0.08);
+            --gradient-start: #f8f9fa;
+            --gradient-end: #e9ecef;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #4a7c59;
+            --primary-hover: #5d8f6a;
+            --background-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --card-background: #2d2d2d;
+            --border-color: #404040;
+            --shadow: rgba(0,0,0,0.3);
+            --gradient-start: #2d2d2d;
+            --gradient-end: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation Menu */
+        .nav-menu {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .menu-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(44, 85, 48, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(44, 85, 48, 0.4);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: var(--card-background);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 15px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.3s ease;
+        }
+
+        .dropdown-item:first-child {
+            border-radius: 15px 15px 0 0;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .dropdown-item:hover {
+            background: var(--gradient-start);
+            color: var(--primary-color);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            left: 250px;
+            z-index: 1000;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(44, 85, 48, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Loyalty Points Display */
+        .loyalty-display {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--card-background);
+            padding: 10px 15px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px var(--shadow);
+            z-index: 999;
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            padding: 60px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .restaurant-logo {
+            width: 200px;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .restaurant-name {
+            font-size: 3.5rem;
+            font-weight: 300;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .legend {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin-bottom: 25px;
+            font-style: italic;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0.8;
+        }
+
+        .slogan {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            font-weight: 500;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            border-top: 2px solid var(--primary-color);
+            padding-top: 20px;
+            display: inline-block;
+        }
+
+        /* Page Sections */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Catalog Styles */
+        .catalog {
+            padding: 80px 0;
+            background-color: var(--background-color);
+        }
+
+        .catalog-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 50px;
+            font-weight: 300;
+        }
+
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .recipe-card {
+            background: var(--card-background);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px var(--shadow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px var(--shadow);
+        }
+
+        .recipe-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .recipe-card:hover .recipe-image {
+            transform: scale(1.05);
+        }
+
+        .recipe-info {
+            padding: 25px;
+        }
+
+        .recipe-name {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .recipe-preview {
+            color: var(--text-color);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            opacity: 0.8;
+        }
+
+        /* Eco Badge */
+        .eco-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Rating Stars */
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 10px 0;
+        }
+
+        .stars {
+            color: #ffd700;
+        }
+
+        .rating-count {
+            color: var(--text-color);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Social Share */
+        .social-share {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .share-btn {
+            background: #4267B2;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .share-btn.twitter { background: #1DA1F2; }
+        .share-btn.instagram { background: #E4405F; }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        /* Reservation Styles */
+        .reservation-section {
+            padding: 80px 0;
+            background: var(--background-color);
+        }
+
+        .reservation-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--card-background);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--card-background);
+            color: var(--text-color);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(44, 85, 48, 0.1);
+        }
+
+        /* Gallery Styles */
+        .gallery-section {
+            padding: 80px 0;
+            background: var(--background-color);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Reviews Section */
+        .reviews-section {
+            background: var(--gradient-start);
+            padding: 60px 0;
+        }
+
+        .review-card {
+            background: var(--card-background);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .reviewer-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .reviewer-info h4 {
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .review-date {
+            color: var(--text-color);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .review-text {
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Chat Widget */
+        .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .chat-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(44, 85, 48, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .chat-button:hover {
+            background: var(--primary-hover);
+            transform: scale(1.1);
+        }
+
+        .chat-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 300px;
+            height: 400px;
+            background: var(--card-background);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow);
+            display: none;
+            flex-direction: column;
+        }
+
+        .chat-window.show {
+            display: flex;
+        }
+
+        .chat-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .chat-input input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background: var(--card-background);
+            color: var(--text-color);
+        }
+
+        /* Order Tracking */
+        .order-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--card-background);
+            border-radius: 15px;
+            box-shadow: 0 5px 20px var(--shadow);
+        }
+
+        .status-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .status-step::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background: var(--border-color);
+            z-index: 1;
+        }
+
+        .status-step:last-child::after {
+            display: none;
+        }
+
+        .status-step.active::after {
+            background: var(--primary-color);
+        }
+
+        .status-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .status-step.active .status-icon {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Coupon System */
+        .coupon-banner {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            margin: 20px 0;
+            border-radius: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .coupon-code {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        /* Recommendations */
+        .recommendations {
+            background: var(--gradient-start);
+            padding: 40px 0;
+        }
+
+        .recommendation-card {
+            background: var(--card-background);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px var(--shadow);
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* Seasonal Calendar */
+        .seasonal-section {
+            padding: 60px 0;
+            background: var(--background-color);
+        }
+
+        .seasonal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .seasonal-item {
+            background: var(--card-background);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .seasonal-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .seasonal-emoji {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .restaurant-name {
+                font-size: 2.5rem;
+            }
+
+            .legend {
+                font-size: 1rem;
+                padding: 0 20px;
+            }
+
+            .slogan {
+                font-size: 0.9rem;
+                letter-spacing: 2px;
+            }
+
+            .catalog-title {
+                font-size: 2rem;
+            }
+
+            .recipe-grid, .gallery-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .nav-menu {
+                top: 10px;
+                left: 10px;
+            }
+
+            .theme-toggle {
+                top: 10px;
+                left: 200px;
+            }
+
+            .loyalty-display {
+                top: 60px;
+                right: 10px;
+                font-size: 0.8rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .chat-window {
+                width: 280px;
+            }
+
+            .order-status {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .status-step::after {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .restaurant-name {
+                font-size: 2rem;
+            }
+
+            .header {
+                padding: 40px 0;
+            }
+
+            .catalog {
+                padding: 50px 0;
+            }
+        }
+
+        /* Cart System Styles */
+        .cart-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(44, 85, 48, 0.3);
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cart-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(44, 85, 48, 0.4);
+        }
+
+        .cart-count {
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .add-to-cart-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .add-to-cart-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #fff;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .close:hover {
+            background: rgba(0,0,0,0.7);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .modal-description {
+            color: var(--text-color);
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .price-section {
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid var(--primary-color);
+        }
+
+        .price {
+            font-size: 2rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .price-label {
+            color: var(--text-color);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            opacity: 0.7;
+        }
+
+        /* Additional styles for all new features */
+        .hero-section {
+            margin: 0;
+            padding: 0;
+        }
+
+        .hero-image-container {
+            position: relative;
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            padding: 40px 20px 20px;
+            text-align: center;
+        }
+
+        .hero-overlay h2 {
+            font-size: 2rem;
+            font-weight: 300;
+            margin: 0;
+        }
+
+        /* About Section Styles */
+        .about-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--background-color) 100%);
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about-title {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .about-description {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            line-height: 1.8;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .about-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .feature-card {
+            background: var(--card-background);
+            padding: 30px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .feature-text {
+            color: var(--text-color);
+            font-size: 1rem;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
+        /* Cart Modal Styles */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+        }
+
+        .cart-content {
+            background-color: var(--card-background);
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        .cart-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .cart-body {
+            padding: 30px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        
+.cart-item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-right: 15px;
+}
+
+.cart-item-details {
+    flex: 1;
+}
+
+.cart-item-name {
+    font-weight: 500;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+.cart-item-price {
+    color: var(--text-color);
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.quantity-btn {
+    background: var(--gradient-start);
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.quantity-btn:hover {
+    background: var(--border-color);
+}
+
+.quantity {
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+    color: var(--text-color);
+}
+
+.remove-item {
+    background: #ff4444;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.remove-item:hover {
+    background: #cc0000;
+}
+
+.cart-total {
+    background: var(--gradient-start);
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.total-amount {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.checkout-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 15px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.checkout-btn:hover {
+    background: var(--primary-hover);
+}
+
+.checkout-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.empty-cart {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-color);
+}
+
+.empty-cart-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+/* Payment Page Styles */
+.payment-page {
+    display: none;
+    position: fixed;
+    z-index: 1002;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--gradient-start);
+    overflow-y: auto;
+}
+
+.payment-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.payment-header {
+    background: var(--card-background);
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 2px 10px var(--shadow);
+}
+
+.payment-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.payment-form {
+    background: var(--card-background);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px var(--shadow);
+}
+
+.order-summary {
+    background: var(--card-background);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px var(--shadow);
+}
+
+.payment-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.payment-method {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--card-background);
+    color: var(--text-color);
+}
+
+.payment-method:hover,
+.payment-method.selected {
+    border-color: var(--primary-color);
+    background: rgba(44, 85, 48, 0.05);
+}
+
+.back-btn {
+    background: #666;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.back-btn:hover {
+    background: #555;
+}
+
+.pay-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.pay-btn:hover {
+    background: var(--primary-hover);
+}
+
+.pay-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .payment-content {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+<body>
+    <!-- Navigation Menu -->
+    <div class="nav-menu">
+        <button class="menu-button" onclick="toggleMenu()">
+            ☰ Menu
+        </button>
+        <div class="dropdown-menu" id="dropdownMenu">
+            <a href="#" class="dropdown-item" onclick="showPage('home')">🏠 Accueil</a>
+            <a href="#" class="dropdown-item" onclick="showPage('catalog')">🍽️ Notre Carte</a>
+            <a href="#" class="dropdown-item" onclick="showPage('music')">🎵 Nos Musiques</a>
+            <a href="#" class="dropdown-item" onclick="showPage('reservation')">📅 Réservation</a>
+            <a href="#" class="dropdown-item" onclick="showPage('gallery')">📸 Galerie</a>
+            <a href="#" class="dropdown-item" onclick="showPage('reviews')">⭐ Avis</a>
+            <a href="#" class="dropdown-item" onclick="showPage('seasonal')">🌱 Saisons</a>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Changer de thème">
+        🌙
+    </button>
+
+    <!-- Loyalty Points Display -->
+    <div class="loyalty-display" id="loyaltyDisplay">
+        💎 Points: <span id="loyaltyPoints">0</span>
+    </div>
+
+    <!-- Cart Button -->
+    <button class="cart-button" onclick="openCart()">
+        🛒 Panier
+        <span class="cart-count" id="cartCount" style="display: none;">0</span>
+    </button>
+
+    <!-- Coupon Banner -->
+    <div class="coupon-banner" id="couponBanner" style="display: none;">
+        🎉 Offre spéciale ! Utilisez le code <span class="coupon-code" onclick="applyCoupon('BIENVENUE10')">BIENVENUE10</span> pour 10% de réduction !
+    </div>
+
+    <!-- Home Page -->
+    <div id="homePage" class="page-section active">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="container">
+                <img src="images/logo.jpg" alt="Le Festin du Marché Logo" class="restaurant-logo">
+                <h1 class="restaurant-name">Le Festin du Marché</h1>
+                <p class="legend">Découvrez des plats maison inspirés du marché, cuisinés avec amour et servis avec le sourire</p>
+                <div class="slogan">Fraîcheur, Passion, Saisons</div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-image-container">
+                <img src="images/restaurant-exterior.jpg" alt="Le Festin du Marché Restaurant" class="hero-image">
+                <div class="hero-overlay">
+                    <h2>Bienvenue dans notre univers culinaire</h2>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recommendations Section -->
+        <section class="recommendations">
+            <div class="container">
+                <h2 style="text-align: center; color: var(--primary-color); margin-bottom: 30px;">🎯 Recommandations pour vous</h2>
+                <div id="recommendationsContainer">
+                    <!-- Recommendations will be generated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about-section">
+            <div class="container">
+                <div class="about-content">
+                    <h2 class="about-title">À Propos du Festin du Marché</h2>
+                    <p class="about-description">
+                        Bienvenue sur le site officiel du Festin du Marché, votre restaurant de cuisine française authentique. 
+                        Nous vous proposons une expérience culinaire complète alliant tradition et modernité, 
+                        avec des plats préparés à partir d'ingrédients frais du marché local et une ambiance musicale soigneusement sélectionnée.
+                    </p>
+                    <p class="about-description">
+                        Notre site vous permet de découvrir notre carte, d'écouter nos musiques d'ambiance et de commander 
+                        vos plats préférés en ligne pour une livraison à domicile. Chaque recette raconte une histoire, 
+                        chaque mélodie accompagne votre repas, et chaque commande est préparée avec le même soin 
+                        que si vous dîniez dans notre restaurant.
+                    </p>
+                    
+                    <div class="about-features">
+                        <div class="feature-card">
+                            <span class="feature-icon">🍽️</span>
+                            <h3 class="feature-title">Cuisine Authentique</h3>
+                            <p class="feature-text">
+                                Des plats traditionnels français préparés avec des ingrédients frais du marché local, 
+                                dans le respect des saisons et des producteurs.
+                            </p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <span class="feature-icon">🎵</span>
+                            <h3 class="feature-title">Ambiance Musicale</h3>
+                            <p class="feature-text">
+                                Une sélection musicale unique qui accompagne vos repas, 
+                                créant l'atmosphère parfaite pour chaque moment de dégustation.
+                            </p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <span class="feature-icon">🚚</span>
+                            <h3 class="feature-title">Livraison à Domicile</h3>
+                            <p class="feature-text">
+                                Commandez en ligne et recevez nos délicieux plats directement chez vous, 
+                                avec la même qualité qu'au restaurant.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Catalog Page -->
+    <div id="catalogPage" class="page-section">
+        <section class="catalog">
+            <div class="container">
+                <h2 class="catalog-title">Notre Carte</h2>
+                <div class="recipe-grid" id="recipeGrid">
+                    <!-- Recipe cards will be generated by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Music Page -->
+    <div id="musicPage" class="page-section">
+        <section class="music-page">
+            <div class="container">
+                <h2 class="catalog-title">Nos Musiques</h2>
+                <p style="text-align: center; font-size: 1.2rem; color: var(--text-color); margin-bottom: 50px; font-style: italic; opacity: 0.8;">Découvrez l'ambiance sonore qui accompagne vos repas</p>
+                <div class="music-grid" id="musicGrid">
+                    <!-- Music cards will be generated by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Reservation Page -->
+    <div id="reservationPage" class="page-section">
+        <section class="reservation-section">
+            <div class="container">
+                <h2 class="catalog-title">Réservation de Table</h2>
+                <div class="reservation-form">
+                    <form id="reservationForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="resFirstName">Prénom *</label>
+                                <input type="text" id="resFirstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="resLastName">Nom *</label>
+                                <input type="text" id="resLastName" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="resEmail">Email *</label>
+                                <input type="email" id="resEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="resPhone">Téléphone *</label>
+                                <input type="tel" id="resPhone" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="resDate">Date *</label>
+                                <input type="date" id="resDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="resTime">Heure *</label>
+                                <select id="resTime" required>
+                                    <option value="">Choisir une heure</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="12:30">12:30</option>
+                                    <option value="13:00">13:00</option>
+                                    <option value="13:30">13:30</option>
+                                    <option value="19:00">19:00</option>
+                                    <option value="19:30">19:30</option>
+                                    <option value="20:00">20:00</option>
+                                    <option value="20:30">20:30</option>
+                                    <option value="21:00">21:00</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="resGuests">Nombre de personnes *</label>
+                                <select id="resGuests" required>
+                                    <option value="">Choisir</option>
+                                    <option value="1">1 personne</option>
+                                    <option value="2">2 personnes</option>
+                                    <option value="3">3 personnes</option>
+                                    <option value="4">4 personnes</option>
+                                    <option value="5">5 personnes</option>
+                                    <option value="6">6 personnes</option>
+                                    <option value="7">7 personnes</option>
+                                    <option value="8">8 personnes</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="resOccasion">Occasion</label>
+                                <select id="resOccasion">
+                                    <option value="">Sélectionner</option>
+                                    <option value="anniversaire">Anniversaire</option>
+                                    <option value="romantique">Dîner romantique</option>
+                                    <option value="affaires">Repas d'affaires</option>
+                                    <option value="famille">Repas de famille</option>
+                                    <option value="autre">Autre</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="resNotes">Demandes spéciales</label>
+                            <textarea id="resNotes" rows="3" placeholder="Allergies, préférences de table, etc."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="add-to-cart-btn">Confirmer la réservation</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Gallery Page -->
+    <div id="galleryPage" class="page-section">
+        <section class="gallery-section">
+            <div class="container">
+                <h2 class="catalog-title">Galerie Photos</h2>
+                <div class="gallery-grid" id="galleryGrid">
+                    <!-- Gallery items will be generated by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Reviews Page -->
+    <div id="reviewsPage" class="page-section">
+        <section class="reviews-section">
+            <div class="container">
+                <h2 class="catalog-title" style="color: var(--text-color);">Avis Clients</h2>
+                <div id="reviewsContainer">
+                    <!-- Reviews will be generated by JavaScript -->
+                </div>
+                
+                <!-- Add Review Form -->
+                <div class="review-card">
+                    <h3 style="color: var(--primary-color); margin-bottom: 20px;">Laissez votre avis</h3>
+                    <form id="reviewForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="reviewName">Nom *</label>
+                                <input type="text" id="reviewName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="reviewRating">Note *</label>
+                                <select id="reviewRating" required>
+                                    <option value="">Choisir une note</option>
+                                    <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                                    <option value="4">⭐⭐⭐⭐ Très bien</option>
+                                    <option value="3">⭐⭐⭐ Bien</option>
+                                    <option value="2">⭐⭐ Moyen</option>
+                                    <option value="1">⭐ Décevant</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reviewText">Votre avis *</label>
+                            <textarea id="reviewText" rows="4" required placeholder="Partagez votre expérience..."></textarea>
+                        </div>
+                        <button type="submit" class="add-to-cart-btn">Publier l'avis</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Seasonal Page -->
+    <div id="seasonalPage" class="page-section">
+        <section class="seasonal-section">
+            <div class="container">
+                <h2 class="catalog-title">Calendrier Saisonnier</h2>
+                <p style="text-align: center; font-size: 1.2rem; color: var(--text-color); margin-bottom: 50px; opacity: 0.8;">
+                    Découvrez les produits de saison que nous utilisons dans nos recettes
+                </p>
+                <div class="seasonal-grid" id="seasonalGrid">
+                    <!-- Seasonal items will be generated by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Order Tracking Modal -->
+    <div id="orderTrackingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" style="background: var(--primary-color); color: white; padding: 20px; text-align: center;">
+                <h2>Suivi de Commande</h2>
+                <span class="close" style="color: white;">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="order-status">
+                    <div class="status-step active">
+                        <div class="status-icon">✓</div>
+                        <span>Confirmée</span>
+                    </div>
+                    <div class="status-step active">
+                        <div class="status-icon">👨‍🍳</div>
+                        <span>En préparation</span>
+                    </div>
+                    <div class="status-step">
+                        <div class="status-icon">🚚</div>
+                        <span>En livraison</span>
+                    </div>
+                    <div class="status-step">
+                        <div class="status-icon">🏠</div>
+                        <span>Livrée</span>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 20px; color: var(--text-color);">
+                    Temps estimé de livraison: <strong>25-35 minutes</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recipe Modal -->
+    <div id="recipeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img id="modalImage" class="modal-image" src="/placeholder.svg" alt="">
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3 id="modalTitle" class="modal-title"></h3>
+                <div id="modalRating" class="rating"></div>
+                <p id="modalDescription" class="modal-description"></p>
+                <div id="modalEcoInfo" style="margin: 15px 0;"></div>
+                <div class="social-share">
+                    <button class="share-btn" onclick="shareRecipe('facebook')">📘 Facebook</button>
+                    <button class="share-btn twitter" onclick="shareRecipe('twitter')">🐦 Twitter</button>
+                    <button class="share-btn instagram" onclick="shareRecipe('instagram')">📷 Instagram</button>
+                </div>
+                <div class="price-section">
+                    <div id="modalPrice" class="price"></div>
+                    <div class="price-label">Prix</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget">
+        <button class="chat-button" onclick="toggleChat()">💬</button>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <h4>Support Client</h4>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div style="padding: 10px; background: var(--gradient-start); border-radius: 10px; margin-bottom: 10px;">
+                    👋 Bonjour ! Comment puis-je vous aider ?
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Tapez votre message..." onkeypress="handleChatInput(event)">
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="cart-modal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2>Votre Panier</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="cart-body" id="cartBody">
+                <!-- Cart items will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Page -->
+    <div id="paymentPage" class="payment-page">
+        <div class="payment-container">
+            <div class="payment-header">
+                <h2>Informations de Paiement</h2>
+                <p>Veuillez vérifier votre commande et entrer vos informations de paiement.</p>
+            </div>
+            <div class="payment-content">
+                <div class="payment-form">
+                    <h3>Informations Personnelles</h3>
+                    <form id="paymentForm">
+                        <div class="form-group">
+                            <label for="firstName">Prénom *</label>
+                            <input type="text" id="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Nom *</label>
+                            <input type="text" id="lastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Téléphone *</label>
+                            <input type="tel" id="phone" required>
+                        </div>
+                        <h3>Méthode de Paiement</h3>
+                        <div class="payment-methods">
+                            <div class="payment-method selected">
+                                💳 Carte de Crédit
+                            </div>
+                            <div class="payment-method">
+                                💰 PayPal
+                            </div>
+                            <div class="payment-method">
+                                🍎 Apple Pay
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px; text-align: right;">
+                            <button type="button" class="back-btn" onclick="backToCart()">Retour au panier</button>
+                            <button type="button" class="pay-btn" onclick="processPayment()">Payer et Confirmer</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="order-summary">
+                    <h3>Récapitulatif de la Commande</h3>
+                    <div id="orderSummary">
+                        <!-- Order summary items will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Global variables
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let loyaltyPoints = parseInt(localStorage.getItem('loyaltyPoints')) || 0;
+    let currentTheme = localStorage.getItem('theme') || 'light';
+
+    // Recipe data with enhanced information
+    const recipes = [
+        {
+            id: 1,
+            name: "Tarte fine aux légumes de saison",
+            image: "images/tarte-fine.jpg",
+            preview: "Pâte croustillante, tomates cerises, courgettes, fromage de chèvre",
+            description: "Une délicieuse tarte fine préparée avec les légumes frais du marché. Notre pâte croustillante maison accueille des tomates cerises juteuses, des courgettes tendres et du fromage de chèvre onctueux. Un plat végétarien qui célèbre les saveurs authentiques de nos producteurs locaux.",
+            price: "12,50€",
+            rating: 4.8,
+            reviewCount: 127,
+            carbonFootprint: "Faible",
+            seasonal: true,
+            category: "végétarien"
+        },
+        {
+            id: 2,
+            name: "Burger de bœuf au cantal & oignons confits",
+            image: "images/burger-cantal.jpg",
+            preview: "Pain brioché, steak saignant, fromage coulant, frites maison",
+            description: "Notre burger signature avec un steak de bœuf français cuit à la perfection, du cantal AOP fondant et des oignons confits caramélisés. Le tout dans un pain brioché artisanal, accompagné de nos frites maison croustillantes. Un classique revisité avec des produits d'exception.",
+            price: "15,00€",
+            rating: 4.6,
+            reviewCount: 89,
+            carbonFootprint: "Élevée",
+            seasonal: false,
+            category: "viande"
+        },
+        {
+            id: 3,
+            name: "Salade fraîcheur au quinoa & avocat",
+            image: "images/vegetable-dish.jpg",
+            preview: "Bol coloré, légumes croquants, graines, sauce maison",
+            description: "Une explosion de fraîcheur et de couleurs dans votre assiette ! Quinoa bio, avocat crémeux, légumes croquants de saison, graines variées et notre vinaigrette maison aux herbes fraîches. Un plat complet, nutritif et délicieusement équilibré.",
+            price: "10,00€",
+            rating: 4.9,
+            reviewCount: 156,
+            carbonFootprint: "Très faible",
+            seasonal: true,
+            category: "végétarien"
+        },
+        {
+            id: 4,
+            name: "Soupe de potiron et châtaignes",
+            image: "images/pumpkin-soup.jpg",
+            preview: "Bol rustique de soupe orange vif, garni de crème fraîche et de morceaux de châtaignes rôties, avec du pain grillé à côté",
+            description: "Une soupe onctueuse et réconfortante qui capture l'essence de l'automne. Notre velouté de potiron est enrichi de châtaignes rôties qui apportent une texture croquante et une saveur douce. Servie avec un nuage de crème fraîche et accompagnée de notre pain artisanal grillé.",
+            price: "9,50€",
+            rating: 4.7,
+            reviewCount: 93,
+            carbonFootprint: "Faible",
+            seasonal: true,
+            category: "végétarien"
+        },
+        {
+            id: 5,
+            name: "Filet de poisson grillé aux herbes sauvages",
+            image: "images/grilled-fish.jpg",
+            preview: "Filet de poisson doré sur une assiette, accompagné de légumes verts sautés et d'une sauce citronnée, avec des herbes fraîches en garniture",
+            description: "Un filet de poisson frais du jour, grillé à la perfection et rehaussé d'un mélange d'herbes sauvages cueillies localement. Accompagné de légumes verts de saison sautés et d'une délicate sauce citronnée qui sublime les saveurs marines. Un plat léger et raffiné.",
+            price: "16,00€",
+            rating: 4.5,
+            reviewCount: 74,
+            carbonFootprint: "Modérée",
+            seasonal: true,
+            category: "poisson"
+        },
+        {
+            id: 6,
+            name: "Clafoutis aux fruits d'été",
+            image: "images/clafoutis-cherries.png",
+            preview: "Dessert moelleux avec des cerises et des abricots colorés, saupoudré de sucre glace, servi dans un plat en céramique",
+            description: "Un dessert traditionnel revisité avec les meilleurs fruits d'été. Notre clafoutis moelleux marie cerises juteuses et abricots parfumés dans une pâte onctueuse aux œufs et à la vanille. Servi tiède et saupoudré de sucre glace, c'est le dessert parfait pour terminer un repas en douceur.",
+            price: "8,00€",
+            rating: 4.8,
+            reviewCount: 112,
+            carbonFootprint: "Faible",
+            seasonal: true,
+            category: "dessert"
+        },
+        {
+            id: 7,
+            name: "Ragoût de légumes racines et lentilles",
+            image: "images/lentil-stew.jpg",
+            preview: "Plat chaleureux avec des carottes, panais, et lentilles dans une sauce épaisse, servi avec une cuillère en bois",
+            description: "Un plat végétarien consistant et réconfortant, parfait pour les journées fraîches. Notre ragoût combine légumes racines de saison (carottes, panais, navets) et lentilles vertes du Puy dans une sauce riche aux herbes. Un concentré de saveurs et de nutriments qui réchauffe le cœur.",
+            price: "11,00€",
+            rating: 4.4,
+            reviewCount: 67,
+            carbonFootprint: "Très faible",
+            seasonal: true,
+            category: "végétarien"
+        },
+        {
+            id: 8,
+            name: "Moelleux au chocolat cœur fondant",
+            image: "images/chocolate-fondant.png",
+            preview: "Dessert coupé avec cœur coulant visible, coulis de fruits rouges",
+            description: "Le dessert incontournable de notre carte ! Un moelleux au chocolat noir 70% avec un cœur fondant irrésistible, accompagné d'un coulis de fruits rouges maison et d'une quenelle de glace vanille. Un moment de pur bonheur chocolaté pour terminer votre repas en beauté.",
+            price: "7,50€",
+            rating: 4.9,
+            reviewCount: 203,
+            carbonFootprint: "Modérée",
+            seasonal: false,
+            category: "dessert"
+        },
+        {
+            id: 9,
+            name: "Salade du marché",
+            image: "images/fruit-salad.png",
+            preview: "Salade de fruits frais avec framboises et prunes, saupoudrée de sucre glace",
+            description: "Une salade de fruits fraîche et colorée qui célèbre les saveurs du marché. Framboises juteuses et prunes sucrées se mélangent harmonieusement dans ce dessert léger et rafraîchissant. Servie dans un bol rustique et délicatement saupoudrée de sucre glace pour une touche de gourmandise.",
+            price: "7,50€",
+            rating: 4.6,
+            reviewCount: 85,
+            carbonFootprint: "Très faible",
+            seasonal: true,
+            category: "dessert"
+        }
+    ];
+
+    // Music data
+    const musicTracks = [
+        {
+            id: 1,
+            name: "Le Festin du Marché",
+            image: "images/desert-landscape.png",
+            audio: "audio/le-festin-du-marche.mp3",
+            description: "Notre morceau signature qui capture l'essence de notre restaurant"
+        },
+        {
+            id: 2,
+            name: "Marché Provençal",
+            image: "images/market-stall.png",
+            audio: "audio/marche-provencal.mp3",
+            description: "Les sons authentiques d'un marché provençal traditionnel"
+        },
+        {
+            id: 3,
+            name: "Table for Two",
+            image: "images/jazz-room.png",
+            audio: "audio/table-for-two.mp3",
+            description: "Une mélodie romantique pour vos dîners en tête-à-tête"
+        },
+        {
+            id: 4,
+            name: "Rustic Whispers",
+            image: "images/european-market.png",
+            audio: "audio/rustic-whispers.mp3",
+            description: "Des murmures rustiques qui évoquent la campagne française"
+        }
+    ];
+
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeApp();
+    });
+
+    function initializeApp() {
+        // Apply saved theme
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        updateThemeIcon();
+        
+        // Initialize components
+        generateRecipeCards();
+        generateMusicCards();
+        generateRecommendations();
+        updateCartCount();
+        updateLoyaltyDisplay();
+        
+        // Set minimum date for reservations (today)
+        const resDateInput = document.getElementById('resDate');
+        if (resDateInput) {
+            const today = new Date().toISOString().split('T')[0];
+            resDateInput.setAttribute('min', today);
+        }
+        
+        // Event listeners
+        setupEventListeners();
+    }
+
+    function setupEventListeners() {
+        // Payment method selection
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', function() {
+                document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+        
+        // Forms
+        const reservationForm = document.getElementById('reservationForm');
+        if (reservationForm) {
+            reservationForm.addEventListener('submit', handleReservation);
+        }
+        
+        const reviewForm = document.getElementById('reviewForm');
+        if (reviewForm) {
+            reviewForm.addEventListener('submit', handleReviewSubmission);
+        }
+        
+        // Modal close buttons
+        const closeButtons = document.querySelectorAll('.close');
+        closeButtons.forEach(btn => {
+            btn.onclick = function() {
+                closeModal();
+                closeCart();
+            };
+        });
+        
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                closeModal();
+            }
+            if (event.target.classList.contains('cart-modal')) {
+                closeCart();
+            }
+        };
+        
+        // Escape key to close modals
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+                closeCart();
+                const paymentPage = document.getElementById('paymentPage');
+                if (paymentPage && paymentPage.style.display === 'block') {
+                    paymentPage.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            }
+        });
+    }
+
+    // Theme functions
+    function toggleTheme() {
+        currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        localStorage.setItem('theme', currentTheme);
+        updateThemeIcon();
+    }
+
+    function updateThemeIcon() {
+        const themeButton = document.querySelector('.theme-toggle');
+        if (themeButton) {
+            themeButton.textContent = currentTheme === 'light' ? '🌙' : '☀️';
+        }
+    }
+
+    // Navigation functions
+    function toggleMenu() {
+        const dropdown = document.getElementById('dropdownMenu');
+        dropdown.classList.toggle('show');
+    }
+
+    function showPage(pageId) {
+        // Hide all pages
+        document.querySelectorAll('.page-section').forEach(page => {
+            page.classList.remove('active');
+        });
+        
+        // Show selected page
+        const pageMap = {
+            'home': 'homePage',
+            'catalog': 'catalogPage',
+            'music': 'musicPage',
+            'reservation': 'reservationPage',
+            'gallery': 'galleryPage',
+            'reviews': 'reviewsPage',
+            'seasonal': 'seasonalPage'
+        };
+        
+        const targetPage = document.getElementById(pageMap[pageId]);
+        if (targetPage) {
+            targetPage.classList.add('active');
+        }
+        
+        // Close dropdown
+        document.getElementById('dropdownMenu').classList.remove('show');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const navMenu = document.querySelector('.nav-menu');
+        if (!navMenu.contains(event.target)) {
+            const dropdown = document.getElementById('dropdownMenu');
+            if (dropdown) {
+                dropdown.classList.remove('show');
+            }
+        }
+    });
+
+    // Loyalty system
+    function updateLoyaltyDisplay() {
+        const loyaltyPointsElement = document.getElementById('loyaltyPoints');
+        if (loyaltyPointsElement) {
+            loyaltyPointsElement.textContent = loyaltyPoints;
+        }
+    }
+
+    function addLoyaltyPoints(points) {
+        loyaltyPoints += points;
+        localStorage.setItem('loyaltyPoints', loyaltyPoints);
+        updateLoyaltyDisplay();
+        showNotification(`+${points} points de fidélité gagnés ! 💎`, 'success');
+    }
+
+    // Cart system
+    function updateCartCount() {
+        const cartCount = document.getElementById('cartCount');
+        if (cartCount) {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            if (totalItems > 0) {
+                cartCount.textContent = totalItems;
+                cartCount.style.display = 'flex';
+            } else {
+                cartCount.style.display = 'none';
+            }
+        }
+    }
+
+    function addToCart(recipeId) {
+        const recipe = recipes.find(r => r.id === recipeId);
+        if (!recipe) return;
+        
+        const existingItem = cart.find(item => item.id === recipeId);
+        
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({
+                id: recipe.id,
+                name: recipe.name,
+                price: recipe.price,
+                image: recipe.image,
+                quantity: 1,
+                category: recipe.category
+            });
+        }
+        
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount();
+        
+        // Add loyalty points
+        const points = Math.floor(parseFloat(recipe.price.replace(',', '.').replace('€', '')) / 2);
+        addLoyaltyPoints(points);
+        
+        // Show confirmation
+        showNotification(`${recipe.name} ajouté au panier !`);
+    }
+
+    function removeFromCart(recipeId) {
+        cart = cart.filter(item => item.id !== recipeId);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount();
+        displayCart();
+    }
+
+    function updateQuantity(recipeId, change) {
+        const item = cart.find(item => item.id === recipeId);
+        if (item) {
+            item.quantity += change;
+            if (item.quantity <= 0) {
+                removeFromCart(recipeId);
+            } else {
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                displayCart();
+            }
+        }
+    }
+
+    function calculateTotal() {
+        return cart.reduce((total, item) => {
+            const price = parseFloat(item.price.replace(',', '.').replace('€', ''));
+            return total + (price * item.quantity);
+        }, 0);
+    }
+
+    function displayCart() {
+        const cartBody = document.getElementById('cartBody');
+        if (!cartBody) return;
+        
+        if (cart.length === 0) {
+            cartBody.innerHTML = `
+                <div class="empty-cart">
+                    <div class="empty-cart-icon">🛒</div>
+                    <h3>Votre panier est vide</h3>
+                    <p>Ajoutez des plats délicieux à votre panier !</p>
+                </div>
+            `;
+            return;
+        }
+        
+        const cartItems = cart.map(item => `
+            <div class="cart-item">
+                <img src="${item.image}" alt="${item.name}" class="cart-item-image">
+                <div class="cart-item-details">
+                    <div class="cart-item-name">${item.name}</div>
+                    <div class="cart-item-price">${item.price}</div>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+                        <span class="quantity">${item.quantity}</span>
+                        <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                        <button class="remove-item" onclick="removeFromCart(${item.id})">Supprimer</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        const total = calculateTotal();
+        
+        cartBody.innerHTML = `
+            ${cartItems}
+            <div class="cart-total">
+                <div class="total-amount">Total: ${total.toFixed(2).replace('.', ',')}€</div>
+                <button class="checkout-btn" onclick="proceedToCheckout()" ${cart.length === 0 ? 'disabled' : ''}>
+                    Finaliser la commande
+                </button>
+            </div>
+        `;
+    }
+
+    function openCart() {
+        displayCart();
+        const cartModal = document.getElementById('cartModal');
+        if (cartModal) {
+            cartModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeCart() {
+        const cartModal = document.getElementById('cartModal');
+        if (cartModal) {
+            cartModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    function proceedToCheckout() {
+        closeCart();
+        displayOrderSummary();
+        const paymentPage = document.getElementById('paymentPage');
+        if (paymentPage) {
+            paymentPage.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function backToCart() {
+        const paymentPage = document.getElementById('paymentPage');
+        if (paymentPage) {
+            paymentPage.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        openCart();
+    }
+
+    function displayOrderSummary() {
+        const orderSummary = document.getElementById('orderSummary');
+        if (!orderSummary) return;
+        
+        const total = calculateTotal();
+        const deliveryFee = 3.50;
+        const finalTotal = total + deliveryFee;
+        
+        const summaryItems = cart.map(item => `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span>${item.name} x${item.quantity}</span>
+                <span>${(parseFloat(item.price.replace(',', '.').replace('€', '')) * item.quantity).toFixed(2).replace('.', ',')}€</span>
+            </div>
+        `).join('');
+        
+        orderSummary.innerHTML = `
+            ${summaryItems}
+            <hr style="margin: 15px 0;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span>Sous-total:</span>
+                <span>${total.toFixed(2).replace('.', ',')}€</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span>Livraison:</span>
+                <span>${deliveryFee.toFixed(2).replace('.', ',')}€</span>
+            </div>
+            <hr style="margin: 15px 0;">
+            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.2rem;">
+                <span>Total:</span>
+                <span>${finalTotal.toFixed(2).replace('.', ',')}€</span>
+            </div>
+        `;
+    }
+
+    function processPayment() {
+        const form = document.getElementById('paymentForm');
+        if (!form || !form.checkValidity()) {
+            if (form) form.reportValidity();
+            return;
+        }
+        
+        // Get form data
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        
+        // Show processing
+        showNotification('Traitement du paiement en cours...', 'info');
+        
+        setTimeout(() => {
+            // Send confirmations
+            sendConfirmationEmail(email, firstName, lastName);
+            sendConfirmationSMS(phone, firstName);
+            
+            // Add loyalty points for order
+            const orderPoints = Math.floor(calculateTotal() * 2);
+            addLoyaltyPoints(orderPoints);
+            
+            // Clear cart
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            
+            // Close payment page
+            const paymentPage = document.getElementById('paymentPage');
+            if (paymentPage) {
+                paymentPage.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+            
+            // Success message
+            showNotification('Commande confirmée ! Email et SMS envoyés. 🎉', 'success');
+            
+            // Reset form
+            form.reset();
+        }, 2000);
+    }
+
+    function sendConfirmationEmail(email, firstName, lastName) {
+        console.log(`📧 Email de confirmation envoyé à: ${email}`);
+        console.log(`Destinataire: ${firstName} ${lastName}`);
+        
+        setTimeout(() => {
+            showNotification(`📧 Email de confirmation envoyé à ${email}`, 'info');
+        }, 500);
+    }
+
+    function sendConfirmationSMS(phone, firstName) {
+        console.log(`📱 SMS de confirmation envoyé au: ${phone}`);
+        console.log(`Message: Bonjour ${firstName}, votre commande est confirmée !`);
+        
+        setTimeout(() => {
+            showNotification(`📱 SMS de confirmation envoyé au ${phone}`, 'info');
+        }, 1000);
+    }
+
+    // Generate content functions
+    function generateRecipeCards() {
+        const recipeGrid = document.getElementById('recipeGrid');
+        if (!recipeGrid) return;
+        
+        recipeGrid.innerHTML = '';
+        
+        recipes.forEach(recipe => {
+            const card = document.createElement('div');
+            card.className = 'recipe-card';
+            
+            const stars = '⭐'.repeat(Math.floor(recipe.rating));
+            const ecoColor = {
+                'Très faible': '#4CAF50',
+                'Faible': '#8BC34A',
+                'Modérée': '#FF9800',
+                'Élevée': '#FF5722'
+            };
+            
+            card.innerHTML = `
+                ${recipe.seasonal ? '<div class="eco-badge">🌱 Saison</div>' : ''}
+                <img src="${recipe.image}" alt="${recipe.name}" class="recipe-image" onclick="openModal(${recipe.id})">
+                <div class="recipe-info">
+                    <h3 class="recipe-name">${recipe.name}</h3>
+                    <div class="rating">
+                        <span class="stars">${stars}</span>
+                        <span class="rating-count">(${recipe.reviewCount})</span>
+                    </div>
+                    <p class="recipe-preview">${recipe.preview}</p>
+                    <div style="margin: 10px 0; padding: 8px; background: ${ecoColor[recipe.carbonFootprint]}20; border-radius: 8px; font-size: 0.9rem;">
+                        🌍 Empreinte carbone: <strong>${recipe.carbonFootprint}</strong>
+                    </div>
+                    <div class="social-share">
+                        <button class="share-btn" onclick="shareRecipe('facebook', ${recipe.id})">📘</button>
+                        <button class="share-btn twitter" onclick="shareRecipe('twitter', ${recipe.id})">🐦</button>
+                        <button class="share-btn instagram" onclick="shareRecipe('instagram', ${recipe.id})">📷</button>
+                    </div>
+                    <button class="add-to-cart-btn" onclick="addToCart(${recipe.id})">
+                        Ajouter au panier - ${recipe.price}
+                    </button>
+                </div>
+            `;
+            
+            recipeGrid.appendChild(card);
+        });
+    }
+
+    function generateMusicCards() {
+        const musicGrid = document.getElementById('musicGrid');
+        if (!musicGrid) return;
+        
+        musicGrid.innerHTML = '';
+        
+        musicTracks.forEach(track => {
+            const card = document.createElement('div');
+            card.className = 'music-card';
+            
+            card.innerHTML = `
+                <img src="${track.image}" alt="${track.name}" class="music-image">
+                <div class="music-info">
+                    <h3 class="music-name">${track.name}</h3>
+                    <p style="color: var(--text-color); margin-bottom: 15px; opacity: 0.8;">${track.description}</p>
+                    <div class="audio-player">
+                        <audio controls style="width: 100%; border-radius: 8px;">
+                            <source src="${track.audio}" type="audio/mpeg">
+                            Votre navigateur ne supporte pas l'élément audio.
+                        </audio>
+                    </div>
+                </div>
+            `;
+            
+            musicGrid.appendChild(card);
+        });
+    }
+
+    function generateRecommendations() {
+        const container = document.getElementById('recommendationsContainer');
+        if (!container) return;
+        
+        // Simple recommendations - top rated items
+        const recommendations = recipes.filter(r => r.rating >= 4.7).slice(0, 2);
+        
+        container.innerHTML = recommendations.map(recipe => `
+            <div class="recommendation-card">
+                <h4 style="color: var(--primary-color); margin-bottom: 10px;">
+                    🎯 Recommandé pour vous: ${recipe.name}
+                </h4>
+                <p style="color: var(--text-color); opacity: 0.8;">
+                    ${recipe.preview} - ${recipe.price}
+                </p>
+                <button class="add-to-cart-btn" onclick="addToCart(${recipe.id})" style="margin-top: 10px; width: auto; padding: 8px 16px;">
+                    Ajouter au panier
+                </button>
+            </div>
+        `).join('');
+    }
+
+    // Modal functionality
+    function openModal(recipeId) {
+        const recipe = recipes.find(r => r.id === recipeId);
+        if (!recipe) return;
+        
+        const modal = document.getElementById('recipeModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalRating = document.getElementById('modalRating');
+        const modalDescription = document.getElementById('modalDescription');
+        const modalPrice = document.getElementById('modalPrice');
+        const modalEcoInfo = document.getElementById('modalEcoInfo');
+        
+        if (!modal || !modalImage || !modalTitle || !modalDescription || !modalPrice) return;
+        
+        modalImage.src = recipe.image;
+        modalImage.alt = recipe.name;
+        modalTitle.textContent = recipe.name;
+        
+        if (modalRating) {
+            const stars = '⭐'.repeat(Math.floor(recipe.rating));
+            modalRating.innerHTML = `
+                <span class="stars">${stars}</span>
+                <span class="rating-count">(${recipe.reviewCount} avis)</span>
+            `;
+        }
+        
+        modalDescription.innerHTML = `
+            ${recipe.description}
+            <button class="add-to-cart-btn" onclick="addToCart(${recipe.id}); closeModal();" style="margin-top: 20px;">
+                Ajouter au panier - ${recipe.price}
+            </button>
+        `;
+        
+        modalPrice.textContent = recipe.price;
+        
+        if (modalEcoInfo) {
+            const ecoColors = {
+                'Très faible': '#4CAF50',
+                'Faible': '#8BC34A',
+                'Modérée': '#FF9800',
+                'Élevée': '#FF5722'
+            };
+            
+            modalEcoInfo.innerHTML = `
+                <div style="padding: 10px; background: ${ecoColors[recipe.carbonFootprint]}20; border-radius: 8px; border-left: 4px solid ${ecoColors[recipe.carbonFootprint]};">
+                    🌍 <strong>Impact écologique:</strong> ${recipe.carbonFootprint}
+                    ${recipe.seasonal ? '<br>🌱 <strong>Produit de saison</strong>' : ''}
+                </div>
+            `;
+        }
+        
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('recipeModal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    // Social sharing functions
+    function shareRecipe(platform, recipeId) {
+        const recipe = recipes.find(r => r.id === recipeId);
+        if (!recipe) return;
+        
+        const url = window.location.href;
+        const text = `Découvrez ${recipe.name} au Festin du Marché !`;
+        
+        let shareUrl = '';
+        switch(platform) {
+            case 'facebook':
+                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+                break;
+            case 'twitter':
+                shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+                break;
+            case 'instagram':
+                navigator.clipboard.writeText(`${text} ${url}`);
+                showNotification('Lien copié ! Collez-le dans votre story Instagram 📷', 'success');
+                return;
+        }
+        
+        if (shareUrl) {
+            window.open(shareUrl, '_blank', 'width=600,height=400');
+        }
+    }
+
+    // Reservation handling
+    function handleReservation(event) {
+        event.preventDefault();
+        
+        const reservationData = {
+            firstName: document.getElementById('resFirstName').value,
+            lastName: document.getElementById('resLastName').value,
+            email: document.getElementById('resEmail').value,
+            phone: document.getElementById('resPhone').value,
+            date: document.getElementById('resDate').value,
+            time: document.getElementById('resTime').value,
+            guests: document.getElementById('resGuests').value,
+            occasion: document.getElementById('resOccasion').value,
+            notes: document.getElementById('resNotes').value
+        };
+        
+        showNotification('Traitement de votre réservation...', 'info');
+        
+        setTimeout(() => {
+            addLoyaltyPoints(50);
+            event.target.reset();
+            showNotification('Réservation confirmée ! 📅', 'success');
+        }, 2000);
+    }
+
+    // Review handling
+    function handleReviewSubmission(event) {
+        event.preventDefault();
+        
+        addLoyaltyPoints(25);
+        event.target.reset();
+        showNotification('Merci pour votre avis ! 25 points gagnés. ⭐', 'success');
+    }
+
+    // Chat system
+    function toggleChat() {
+        const chatWindow = document.getElementById('chatWindow');
+        if (chatWindow) {
+            chatWindow.classList.toggle('show');
+        }
+    }
+
+    // Notification system
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: ${type === 'success' ? '#4CAF50' : type === 'info' ? '#2196F3' : '#ff4444'};
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            z-index: 10000;
+            max-width: 300px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease;
+        `;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+
+    // Add CSS animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(100%); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(100%); }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+</body>
+</html>
